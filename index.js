@@ -6,7 +6,8 @@ function unhideButtons() {
         printButton.classList.remove('hidden');
         downloadButton.classList.remove('hidden');
         console.log("Print and Download buttons are now visible!");
-    } else {
+    }
+    else {
         console.log("Viewer.js detected, but buttons not found.");
     }
 }
@@ -17,17 +18,23 @@ function detectViewerJS() {
         unhideButtons();
         return true;
     }
+
     return false;
 }
 
 if (!detectViewerJS()) {
-    console.log("Waiting for Viewer.js...");
+    let attempts = 1;
 
-    const observer = new MutationObserver(() => {
-        if (detectViewerJS()) {
-            observer.disconnect();z
-        }
-    });
+    const retry = () => {
+        setTimeout(() => {
+            if (detectViewerJS() || attempts >= 6) {
+                return;
+            }
 
-    observer.observe(document.body, { childList: true, subtree: true });
+            attempts++;
+            retry();
+        }, 500 * attempts);
+    }
+
+    retry();
 }
